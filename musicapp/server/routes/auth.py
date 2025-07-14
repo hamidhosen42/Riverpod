@@ -57,5 +57,8 @@ async def login_user(user: UserLogin):
 
 @router.get("/currentuser", response_model=UserPublic)
 async def current_user_data(user_dict=Depends(auth_middleware)):
-    user = user_dict["user"]
-    return UserPublic(id=user["id"], name=user["name"], email=user["email"])
+    try:
+        user = user_dict["user"]
+        return UserPublic(id=user["id"], name=user["name"], email=user["email"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching user data: {str(e)}")

@@ -13,4 +13,3 @@ class UserPublic(BaseModel):
     id: str
     name: str
     email: EmailStr
-    password: str

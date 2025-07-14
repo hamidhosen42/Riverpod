@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:client/core/constants/server_constants.dart';
 import 'package:client/core/failure/failure.dart';
+import 'package:flutter/rendering.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -65,12 +66,25 @@ class AuthRemoteRepository {
   }
 
   Future<Either<AppFailure, UserModel>> getCurrentUserData(String token) async {
+
+    if (token.isEmpty) {
+      return Left(AppFailure('Token is empty'));
+    }
+
+    debugPrint("Fetching current user data with token: $token");
+
     try {
       final response = await http.get(
-        Uri.parse('${ServerConstants.serverURL}/auth/currentUser'),
+        Uri.parse('${ServerConstants.serverURL}/auth/currentuser'),
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token',},
       );
+
+      debugPrint("Response body: ${response.body}");
+
+
       final resBodyMap = jsonDecode(response.body) as Map<String, dynamic>;
+
+      debugPrint("Response status code: ${response.statusCode}");
 
       if (response.statusCode != 200) {
         return Left(AppFailure(resBodyMap['detail']));

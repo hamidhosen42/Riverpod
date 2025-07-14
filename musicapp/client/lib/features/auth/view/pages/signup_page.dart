@@ -26,15 +26,13 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
-    super.dispose();
-    formKey.currentState!.validate();
+    super.dispose(); // Dispose properly
   }
 
   @override
   Widget build(BuildContext context) {
     final isLoading =
-        ref.watch(authViewmodelProvider.select((val) => val?.isLoading)) ==
-        true;
+        ref.watch(authViewmodelProvider.select((val) => val?.isLoading == true));
 
     ref.listen(authViewmodelProvider, (_, next) {
       next?.when(
@@ -84,7 +82,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               ),
               const SizedBox(height: 20.0),
               isLoading
-                  ? Loader()
+                  ? const Loader()
                   : AuthGradientButton(
                       buttonText: "Sign Up",
                       onTap: () async {
@@ -106,7 +104,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SigninPage()),
+                    MaterialPageRoute(builder: (context) => const SigninPage()),
                   );
                 },
                 child: RichText(

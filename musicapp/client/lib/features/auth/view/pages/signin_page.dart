@@ -6,16 +6,17 @@ import 'package:client/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils.dart';
+import '../../../home/view/pages/home_page.dart' show HomePage;
 import '../widgets/auth_gradient_button.dart';
 
 class SigninPage extends ConsumerStatefulWidget {
   const SigninPage({super.key});
 
   @override
-  ConsumerState<SigninPage> createState() => _SignupPageState();
+  ConsumerState<SigninPage> createState() => _SigninPageState();
 }
 
-class _SignupPageState extends ConsumerState<SigninPage> {
+class _SigninPageState extends ConsumerState<SigninPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -25,25 +26,26 @@ class _SignupPageState extends ConsumerState<SigninPage> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
-    formKey.currentState!.validate();
   }
 
   @override
   Widget build(BuildContext context) {
-     final isLoading =
-        ref.watch(authViewmodelProvider.select((val) => val?.isLoading)) ==
-        true;
+    // Listen for changes in the authViewmodel state
+    final isLoading = ref.watch(
+      authViewmodelProvider.select((val) => val?.isLoading == true),
+    );
 
     ref.listen(authViewmodelProvider, (_, next) {
       next?.when(
         data: (data) {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => const SigninPage()),
-          // );
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+            (route) => false,
+          );
         },
         error: (error, st) {
-          showSnackBar(context,error.toString());
+          showSnackBar(context, error.toString());
         },
         loading: () {},
       );
@@ -72,7 +74,7 @@ class _SignupPageState extends ConsumerState<SigninPage> {
               ),
               const SizedBox(height: 20.0),
               isLoading
-                  ? Loader()
+                  ? const Loader()
                   : AuthGradientButton(
                       buttonText: "Sign In",
                       onTap: () async {
@@ -83,7 +85,7 @@ class _SignupPageState extends ConsumerState<SigninPage> {
                                 email: emailController.text,
                                 password: passwordController.text,
                               );
-                        }else{
+                        } else {
                           showSnackBar(context, "Missing fields!");
                         }
                       },
@@ -93,7 +95,7 @@ class _SignupPageState extends ConsumerState<SigninPage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SignupPage()),
+                    MaterialPageRoute(builder: (context) => const SignupPage()),
                   );
                 },
                 child: RichText(
